@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <main> 
+            <link rel="icon" href="./favicon.ico" type="image/x-icon">
+            <title>Attend Yogi</title>
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+            <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
+            <style>
+                body {
+                    background-color: pink;
+                    display: flex;
+                    justify-content: center;
+                }
+
+                .login-container {
+                    background-color: white;
+                    vertical-align: middle;
+                    width: 90%;
+                    padding: 40px;
+                    margin-top:100px;
+                }
+                .input-section {
+                    padding-left: 20px;
+                    padding-right:20px;
+                    padding-top: 20px;
+                }
+            </style>
+        </main>
+    </head>
+<body>
+    <div class="login-container card centering">
+        <h2 id="title-attendance">Attendance</h2>
+        <div id="para-attendance">Tell your students to enter the code </div>
+        <a href="/createclass">Create a new class</a>
+    <p id="demo"></p>
+    
+    <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Last time attended</th>
+            <th scope ="col">Number of meetings</th>
+
+            
+            
+          </tr>
+        </thead>
+        <tbody id="attendtable">
+        </tbody>
+      </table>
+        
+        </div>
+        <div class="spinner-border text-warning" id="loader" role="status" show="false" hidden><span class="sr-only"></span></div>
+        <br>
+       
+        <script>
+            function loadPeople(array) {
+              
+                totalHTML = "";
+                i = 0
+                found = false;
+                while (i < array.length) {
+                    arr = array[i];
+                    totalHTML = totalHTML + "<tr><td>" + arr["name"] + "</td><td>" + arr["last_joined"] + "</td><td>" + arr["amount"] + "</td></tr>"
+                    i = i + 1;
+                    found = true;
+                }
+                if (!found) {
+                  totalHTML = "Waiting for people to join..."
+                  
+                }
+                $("#attendtable").html(totalHTML)
+                console.log(totalHTML)
+            }
+            $(document).ready(function() {
+              makeAjax();
+              var intervalId = window.setInterval(function() {
+                makeAjax()
+              }, 5000);
+            });
+            function makeAjax() {
+              code = window.location.href.split("attendance/")[1]
+              $("#title-attendance").html("Attendance for room '" + code + "'");
+              $("#para-attendance").html("Tell your students to enter the code '" + code + "'");
+              $.ajax({
+                type: 'POST',
+                url: '/ajax/get-attendance',
+                data: { 
+                    'code': code, 
+                },
+                success: function(msg){
+                  loadPeople(msg)
+                },
+              });
+            }
+
+
+            
+            </script>
+    </div>  
+</body>
+</html>
